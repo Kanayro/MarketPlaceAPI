@@ -25,15 +25,19 @@ public class Person {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "role")
+    private String role;
+
     public Person() {
     }
 
-    public Person(int id, String name, String email, String login, String password) {
+    public Person(int id, String name, String email, String login, String password, String role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
     public int getId() {
@@ -74,5 +78,13 @@ public class Person {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

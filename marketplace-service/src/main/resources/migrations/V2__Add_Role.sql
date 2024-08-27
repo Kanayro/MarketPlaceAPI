@@ -1,0 +1,1 @@
+alter table person add column role varchar(100) check ( role in ('ROLE_ADMIN','ROLE_USER')) not null;
