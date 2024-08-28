@@ -4,7 +4,9 @@ import org.example.marketplaceservice.dto.ProductDTO;
 import org.example.marketplaceservice.models.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductMapper {
 
     private final ModelMapper mapper;

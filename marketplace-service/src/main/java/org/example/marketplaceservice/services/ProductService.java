@@ -6,6 +6,7 @@ import org.example.marketplaceservice.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +46,9 @@ public class ProductService {
             throw new ProductNotFoundException("Product with this id not found");
         }
         productRepository.delete(product.get());
+    }
+
+    public List<Product> getProducts() {
+        return productRepository.findAll();
     }
 }

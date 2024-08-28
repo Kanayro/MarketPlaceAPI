@@ -35,11 +35,11 @@ public class ProductDTO {
         this.count = count;
     }
 
-    public boolean isCount() {
+    public boolean getIsCount() {
         return isCount;
     }
 
-    public void setCount(boolean count) {
+    public void setIsCount(boolean count) {
         isCount = count;
     }
 }

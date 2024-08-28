@@ -22,7 +22,7 @@ public class Product {
     @Column(name = "count")
     private int count;
 
-    @Column(name = "isCount")
+    @Column(name = "iscount")
     private boolean isCount;
 
     public Product() {
