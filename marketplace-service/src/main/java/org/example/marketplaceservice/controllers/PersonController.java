@@ -1,7 +1,6 @@
 package org.example.marketplaceservice.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.marketplaceservice.dto.AuthenticationDTO;
 import org.example.marketplaceservice.dto.PersonDTO;
@@ -82,8 +81,7 @@ public class PersonController {
 
     @GetMapping("/per")
     public String getPerson(HttpServletRequest request){
-        HttpSession session = request.getSession(true);
-        session.setAttribute("Ses","memwmewmmem");
+
         return "sdsdsdsdsd";
 
     }
