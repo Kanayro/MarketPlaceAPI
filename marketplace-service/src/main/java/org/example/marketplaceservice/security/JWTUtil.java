@@ -20,13 +20,13 @@ public class JWTUtil {
     @Value("${jwt_secret}")
     private String secret;
 
-    public String generateToken(Person person){
+    public String generateToken(JWTDTO jwtdto){
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
         return JWT.create().withSubject("User details")
-                .withClaim("id",person.getId())
-                .withClaim("name",person.getLogin())
-                .withClaim("role",person.getRole())
+                .withClaim("id",jwtdto.getId())
+                .withClaim("name",jwtdto.getLogin())
+                .withClaim("role",jwtdto.getRole())
                 .withIssuedAt(new Date())
                 .withIssuer("Kanayro")
                 .withExpiresAt(expirationDate)

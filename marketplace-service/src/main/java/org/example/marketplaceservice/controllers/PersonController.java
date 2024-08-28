@@ -1,16 +1,23 @@
 package org.example.marketplaceservice.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.marketplaceservice.dto.AuthenticationDTO;
+import org.example.marketplaceservice.dto.JWTDTO;
 import org.example.marketplaceservice.dto.PersonDTO;
 import org.example.marketplaceservice.exceptions.PersonNotCreatedException;
+import org.example.marketplaceservice.exceptions.PersonNotFoundException;
 import org.example.marketplaceservice.mappers.PersonMapper;
+import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Person;
 import org.example.marketplaceservice.security.JWTUtil;
 import org.example.marketplaceservice.services.PersonService;
 import org.example.marketplaceservice.services.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -55,25 +63,25 @@ public class PersonController {
             throw new PersonNotCreatedException(errorMsg.toString());
         }
         registrationService.register(person);
-
-        String token = jwtUtil.generateToken(person);
+        JWTDTO jwtdto = personMapper.convertToJWTDTO(person);
+        String token = jwtUtil.generateToken(jwtdto);
 
         return Map.of("jwt-token",token);
 
     }
 
     @PostMapping("/login")
-    public Map<String,String> login(@RequestBody @Valid AuthenticationDTO authenticationDTO, BindingResult result) {
+    public Map<String,String> login(@RequestBody @Valid AuthenticationDTO authenticationDTO, BindingResult result, HttpSession session) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(authenticationDTO.getLogin(),
                 authenticationDTO.getPassword());
-
         try{
             authenticationManager.authenticate(token);
         }catch (BadCredentialsException e){
-            return Map.of("error","Bad credentials");
+            throw new PersonNotFoundException("Invalid login or password");
         }
-        Person person = personService.findByLogin(authenticationDTO.getLogin());
-        String jToken = jwtUtil.generateToken(person);
+        JWTDTO jwtdto = personMapper.convertToJWTDTO(personService.findByLogin(authenticationDTO.getLogin()));
+        session.setAttribute("user", new Cart());
+        String jToken = jwtUtil.generateToken(jwtdto);
 
         return Map.of("jwt-token",jToken);
 
