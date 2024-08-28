@@ -1,8 +1,6 @@
 package org.example.marketplaceservice.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.marketplaceservice.dto.AuthenticationDTO;
@@ -17,7 +15,6 @@ import org.example.marketplaceservice.security.JWTUtil;
 import org.example.marketplaceservice.services.PersonService;
 import org.example.marketplaceservice.services.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +22,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +48,6 @@ public class PersonController {
     @PostMapping("/registration")
     public Map<String,String> register(@RequestBody @Valid PersonDTO personDTO, BindingResult result) {
         Person person = personMapper.convertToPerson(personDTO);
-
         if(result.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = result.getFieldErrors();

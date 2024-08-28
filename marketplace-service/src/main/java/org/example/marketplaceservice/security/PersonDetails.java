@@ -12,7 +12,6 @@ public class PersonDetails implements UserDetails {
 
     private final Person person;
 
-
     public PersonDetails(Person person) {
         this.person = person;
     }

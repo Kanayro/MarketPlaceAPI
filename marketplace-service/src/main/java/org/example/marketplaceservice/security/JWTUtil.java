@@ -7,7 +7,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.marketplaceservice.dto.JWTDTO;
-import org.example.marketplaceservice.models.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

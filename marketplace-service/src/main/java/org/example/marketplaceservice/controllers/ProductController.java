@@ -27,21 +27,16 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
-    private final Cart cart;
-    private final JWTUtil jwtUtil;
 
     @Autowired
-    public ProductController(ProductService productService, ProductMapper productMapper, Cart cart, JWTUtil jwtUtil) {
+    public ProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
-        this.cart = cart;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult result) {
         Product product = productMapper.convertToProduct(productDTO);
-
         if(result.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = result.getFieldErrors();
@@ -51,7 +46,6 @@ public class ProductController {
             }
             throw new ProductNotFoundException(errorMsg.toString());
         }
-
         productService.save(product);
 
         return ResponseEntity.ok(HttpStatus.OK);
