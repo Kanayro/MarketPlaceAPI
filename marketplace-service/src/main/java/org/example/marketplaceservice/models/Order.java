@@ -12,13 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.CascadeType;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -33,7 +35,7 @@ public class Order {
     @JoinColumn(referencedColumnName = "id",name = "person_id")
     private Person person;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<ProductInOrder> products;
 
     @Column(name = "date_of_create")

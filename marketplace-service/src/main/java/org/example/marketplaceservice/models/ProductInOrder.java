@@ -1,6 +1,7 @@
 package org.example.marketplaceservice.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -29,7 +30,8 @@ public class ProductInOrder {
     private int count;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id",name = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JsonIgnore
     private Order order;
 
     public ProductInOrder() {
