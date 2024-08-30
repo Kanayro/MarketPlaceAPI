@@ -17,13 +17,18 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final ProductService productService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, ProductService productService) {
         this.orderRepository = orderRepository;
+        this.productService = productService;
     }
 
     public void save(Order order) {
+        for (var productInOrder : order.getProducts()) {
+            productService.updateProduct(productInOrder);
+        }
         order.setDateOfCreate(new Date());
         orderRepository.save(order);
     }

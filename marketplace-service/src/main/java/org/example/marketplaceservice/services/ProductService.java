@@ -2,6 +2,7 @@ package org.example.marketplaceservice.services;
 
 import org.example.marketplaceservice.exceptions.ProductNotFoundException;
 import org.example.marketplaceservice.models.Product;
+import org.example.marketplaceservice.models.ProductInOrder;
 import org.example.marketplaceservice.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,19 @@ public class ProductService {
         }
         updatedProduct.setId(id);
         productRepository.save(updatedProduct);
+    }
+
+    public void updateProduct(ProductInOrder productInOrder) {
+        Optional<Product> prod = productRepository.findByName(productInOrder.getName());
+        if(prod.isEmpty()) {
+            throw new ProductNotFoundException("Product with this name not found ");
+        }
+        Product product = prod.get();
+        product.setCount(product.getCount()-productInOrder.getCount());
+        if(product.getCount() == 0) {
+            product.setCount(false);
+        }
+        productRepository.save(product);
     }
 
     public void delete(int id){
