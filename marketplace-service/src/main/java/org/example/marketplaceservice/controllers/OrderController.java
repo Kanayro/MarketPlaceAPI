@@ -37,9 +37,12 @@ public class OrderController {
     @GetMapping("/create")
     public ResponseEntity<HttpStatus> createOrder(HttpServletRequest request, HttpSession session) {
         Cart cart = (Cart) session.getAttribute("user");
+
         JWTDTO jwtdto = jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request));
+
         Person person = personService.findByLogin(jwtdto.getLogin());
         Order order = orderService.createOrder(cart.getCart(),person);
+        orderService.save(order);
 
         return ResponseEntity.ok(HttpStatus.OK);
     }

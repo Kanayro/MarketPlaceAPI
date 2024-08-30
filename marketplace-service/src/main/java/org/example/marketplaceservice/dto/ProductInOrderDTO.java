@@ -15,6 +15,9 @@ public class ProductInOrderDTO {
         this.count = count;
     }
 
+    public ProductInOrderDTO() {
+    }
+
     public String getName() {
         return name;
     }
