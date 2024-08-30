@@ -58,8 +58,7 @@ public class PersonController {
             throw new PersonNotCreatedException(errorMsg.toString());
         }
         registrationService.register(person);
-        JWTDTO jwtdto = personMapper.convertToJWTDTO(person);
-        String token = jwtUtil.generateToken(jwtdto);
+        String token = jwtUtil.generateToken(personMapper.convertToJWTDTO(person));
 
         return Map.of("jwt-token",token);
 

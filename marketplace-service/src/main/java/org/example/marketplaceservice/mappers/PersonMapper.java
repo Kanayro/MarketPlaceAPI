@@ -25,5 +25,9 @@ public class PersonMapper {
         return mapper.map(personDTO, Person.class);
     }
 
+    public Person convertToPerson(JWTDTO jwtdto) {
+        return mapper.map(jwtdto, Person.class);
+    }
+
     public JWTDTO convertToJWTDTO(Person person) { return mapper.map(person, JWTDTO.class); }
 }

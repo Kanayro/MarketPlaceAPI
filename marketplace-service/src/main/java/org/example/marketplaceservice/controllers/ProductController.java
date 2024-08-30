@@ -63,10 +63,10 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/add")
-    public ResponseEntity<HttpStatus> addProductToCart(@PathVariable int id, HttpSession session) {
+    public ResponseEntity<HttpStatus> addProductToCart(@PathVariable int id, HttpSession session, @RequestParam("count") int count) {
         Product product = productService.findById(id);
         Cart cart = (Cart) session.getAttribute("user");
-        cart.addProduct(product);
+        cart.addProduct(product,count);
         session.setAttribute("user",cart);
 
         return ResponseEntity.ok(HttpStatus.OK);

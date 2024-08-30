@@ -1,20 +1,18 @@
 package org.example.marketplaceservice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ManyToMany;
-
-import java.util.List;
-
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
-@Table(name = "Product")
-public class Product {
+@Table(name = "productinorder")
+public class ProductInOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,18 +28,19 @@ public class Product {
     @Column(name = "count")
     private int count;
 
-    @Column(name = "iscount")
-    private boolean isCount;
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id",name = "order_id")
+    private Order order;
 
-    public Product() {
+    public ProductInOrder() {
     }
 
-    public Product(int id, String name, int price, int count, boolean isCount) {
+
+    public ProductInOrder(int id, String name, int price, int count) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.count = count;
-        this.isCount = isCount;
     }
 
     public int getId() {
@@ -76,12 +75,11 @@ public class Product {
         this.count = count;
     }
 
-    public boolean isCount() {
-        return isCount;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setCount(boolean count) {
-        isCount = count;
+    public void setOrder(Order order) {
+        this.order = order;
     }
-
 }

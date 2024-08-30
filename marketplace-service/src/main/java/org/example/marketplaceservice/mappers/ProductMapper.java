@@ -2,6 +2,7 @@ package org.example.marketplaceservice.mappers;
 
 import org.example.marketplaceservice.dto.ProductDTO;
 import org.example.marketplaceservice.models.Product;
+import org.example.marketplaceservice.models.ProductInOrder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,5 +23,9 @@ public class ProductMapper {
 
     public ProductDTO convertToProductDTO(Product product) {
         return mapper.map(product, ProductDTO.class);
+    }
+
+    public ProductInOrder convertToProductInOrder(Product product) {
+        return mapper.map(product, ProductInOrder.class);
     }
 }

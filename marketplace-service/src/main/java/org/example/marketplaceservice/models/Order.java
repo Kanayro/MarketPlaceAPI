@@ -1,17 +1,18 @@
 package org.example.marketplaceservice.models;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Column;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.JoinTable;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+
 
 import java.util.Date;
 import java.util.List;
@@ -32,13 +33,8 @@ public class Order {
     @JoinColumn(referencedColumnName = "id",name = "person_id")
     private Person person;
 
-    @ManyToMany
-    @JoinTable(
-            name = "Order_Product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    List<Product> products;
+    @OneToMany(mappedBy = "order")
+    private List<ProductInOrder> products;
 
     @Column(name = "date_of_create")
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,11 +46,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(int id, int cost, Person person, List<Product> products, Date dateOfCreate, String status) {
+    public Order(int id, int cost, Person person, Date dateOfCreate, String status) {
         this.id = id;
         this.cost = cost;
         this.person = person;
-        this.products = products;
         this.dateOfCreate = dateOfCreate;
         this.status = status;
     }
@@ -78,17 +73,8 @@ public class Order {
     public Person getPerson() {
         return person;
     }
-
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 
     public Date getDateOfCreate() {
@@ -105,5 +91,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<ProductInOrder> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductInOrder> products) {
+        this.products = products;
     }
 }
