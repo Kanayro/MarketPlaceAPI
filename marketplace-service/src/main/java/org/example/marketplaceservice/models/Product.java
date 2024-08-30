@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.ManyToMany;
+
+import java.util.List;
 
 
 @Entity
@@ -29,15 +32,19 @@ public class Product {
     @Column(name = "iscount")
     private boolean isCount;
 
+    @ManyToMany(mappedBy = "products")
+    private List<Order> orders;
+
     public Product() {
     }
 
-    public Product(int id, String name, int price, int count, boolean isCount) {
+    public Product(int id, String name, int price, int count, boolean isCount, List<Order> orders) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.count = count;
         this.isCount = isCount;
+        this.orders = orders;
     }
 
     public int getId() {
@@ -78,5 +85,13 @@ public class Product {
 
     public void setCount(boolean count) {
         isCount = count;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }
