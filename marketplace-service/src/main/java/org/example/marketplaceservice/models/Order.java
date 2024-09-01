@@ -102,4 +102,16 @@ public class Order {
     public void setProducts(List<ProductInOrder> products) {
         this.products = products;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", cost=" + cost +
+                ", person=" + person +
+                ", products=" + products +
+                ", dateOfCreate=" + dateOfCreate +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

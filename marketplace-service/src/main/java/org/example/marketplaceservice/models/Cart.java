@@ -1,8 +1,7 @@
 package org.example.marketplaceservice.models;
 
+import org.example.marketplaceservice.exceptions.ProductNotEnoughException;
 import org.example.marketplaceservice.exceptions.ProductNotFoundException;
-import org.example.marketplaceservice.mappers.ProductMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -20,7 +19,7 @@ public class Cart {
         if(product.isCount() == false) {
             throw new ProductNotFoundException("Product not found in storage");
         }else if (product.getCount()-count < 0) {
-            throw new ProductNotFoundException("Product not enough in storage");
+            throw new ProductNotEnoughException("Product not enough in storage");
         }
         ProductInOrder productInOrder = new ProductInOrder();
         productInOrder.setCount(count);

@@ -1,15 +1,15 @@
 package org.example.marketplaceservice.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.example.marketplaceservice.dto.JWTDTO;
 import org.example.marketplaceservice.dto.ProductDTO;
+import org.example.marketplaceservice.exceptions.ErrorResponse;
+import org.example.marketplaceservice.exceptions.ProductNotCreatedException;
+import org.example.marketplaceservice.exceptions.ProductNotEnoughException;
 import org.example.marketplaceservice.exceptions.ProductNotFoundException;
 import org.example.marketplaceservice.mappers.ProductMapper;
 import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Product;
-import org.example.marketplaceservice.security.JWTUtil;
 import org.example.marketplaceservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class ProductController {
             for(FieldError error : errors){
                 errorMsg.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ");
             }
-            throw new ProductNotFoundException(errorMsg.toString());
+            throw new ProductNotCreatedException(errorMsg.toString());
         }
         productService.save(product);
 
@@ -70,5 +70,25 @@ public class ProductController {
         session.setAttribute("user",cart);
 
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    //Exception handlers
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(ProductNotFoundException e){
+        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(ProductNotEnoughException e){
+        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(ProductNotCreatedException e){
+        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

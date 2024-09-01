@@ -3,6 +3,8 @@ package org.example.marketplaceservice.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.marketplaceservice.dto.ProductInOrderDTO;
+import org.example.marketplaceservice.exceptions.CartIsEmptyException;
+import org.example.marketplaceservice.exceptions.ErrorResponse;
 import org.example.marketplaceservice.mappers.ProductInOrderMapper;
 import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Product;
@@ -10,6 +12,8 @@ import org.example.marketplaceservice.models.ProductInOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +35,9 @@ public class CartController {
     @GetMapping("/get")
     public List<ProductInOrderDTO> getCart(HttpSession session) {
         Cart cart = (Cart) session.getAttribute("user");
+        if(cart.getCart().isEmpty()) {
+            throw new CartIsEmptyException("Your cart is empty");
+        }
         return cart.getCart().stream().map(productInOrderMapper::convertToProductInOrderDTO).collect(Collectors.toList());
     }
 
@@ -40,4 +47,13 @@ public class CartController {
         cart.clear();
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    //Exception Handlers
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(CartIsEmptyException e){
+        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

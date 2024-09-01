@@ -34,7 +34,7 @@ public class OrderService {
         for (var productInOrder : order.getProducts()) {
             productService.updateProduct(productInOrder);
         }
-        //order.setDateOfCreate();
+        order.setDateOfCreate(new Date());
         order.setStatus("ASSEMBLY");
         orderRepository.save(order);
     }
