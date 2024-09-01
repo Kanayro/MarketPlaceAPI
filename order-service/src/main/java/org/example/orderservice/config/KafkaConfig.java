@@ -1,11 +1,11 @@
-package org.example.marketplaceservice.config;
+package org.example.orderservice.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.example.marketplaceservice.dto.OrderMessageDTO;
+import org.example.orderservice.dto.OrderMessageDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -28,21 +28,22 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    @Bean
     public ConsumerFactory<String, OrderMessageDTO> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "order_status_consumer");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "order_consumer");
         config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.example.marketplaceservice.dto.OrderMessageDTO");
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.example.orderservice.dto.OrderMessageDTO");
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
     public NewTopic newTopic() {
-        return new NewTopic("order", 1 , (short) 1);
+        return new NewTopic("resp", 1 , (short) 1);
     }
 
     @Bean
@@ -56,5 +57,4 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
-
 }

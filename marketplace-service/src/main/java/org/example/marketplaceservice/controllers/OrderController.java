@@ -3,6 +3,7 @@ package org.example.marketplaceservice.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.marketplaceservice.dto.OrderDTO;
+import org.example.marketplaceservice.dto.OrderMessageDTO;
 import org.example.marketplaceservice.exceptions.CartIsEmptyException;
 import org.example.marketplaceservice.exceptions.ErrorResponse;
 import org.example.marketplaceservice.exceptions.OrderNotFoundException;
@@ -51,7 +52,7 @@ public class OrderController {
         Person person = personService.findByLogin( jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin());
         Order order = orderService.createOrder(cart.getCart(),person);
         orderService.save(order);
-        producer.sendMessage("Order " +order.getId());
+        producer.sendMessage(new OrderMessageDTO(order.getId(), order.getStatus()));
         cart.clear();
 
         return ResponseEntity.ok(HttpStatus.OK);

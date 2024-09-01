@@ -1,9 +1,10 @@
-package org.example.marketplaceservice.util;
+package org.example.orderservice.services;
 
-import org.example.marketplaceservice.dto.OrderMessageDTO;
+import org.example.orderservice.dto.OrderMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class KafkaProducer {
@@ -15,8 +16,8 @@ public class KafkaProducer {
         this.template = template;
     }
 
-    public void sendMessage(OrderMessageDTO message) {
-        System.out.println("Send message to order-service");
-        template.send("order", message);
+    public void sendOrderStatus(OrderMessageDTO message) {
+        template.send("resp",message);
     }
+
 }

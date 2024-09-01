@@ -116,6 +116,4 @@ public class PersonController {
         ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
-
 }

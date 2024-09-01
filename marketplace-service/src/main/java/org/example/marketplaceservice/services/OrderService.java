@@ -3,15 +3,12 @@ package org.example.marketplaceservice.services;
 import org.example.marketplaceservice.exceptions.OrderNotFoundException;
 import org.example.marketplaceservice.models.Order;
 import org.example.marketplaceservice.models.Person;
-import org.example.marketplaceservice.models.Product;
 import org.example.marketplaceservice.models.ProductInOrder;
 import org.example.marketplaceservice.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +18,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
-
 
     @Autowired
     public OrderService(OrderRepository orderRepository, ProductService productService) {
@@ -61,7 +57,14 @@ public class OrderService {
         return orderRepository.findOrdersByPerson(person);
     }
 
+    public void updateOrderStatus(String status, int id) {
+        Optional<Order> ord = orderRepository.findById(id);
 
-
-
+        if(ord.isEmpty()) {
+            throw new OrderNotFoundException("Order with this id not found");
+        }
+        Order order = ord.get();
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
 }

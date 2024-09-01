@@ -8,7 +8,6 @@ public class JWTDTO {
 
     private String role;
 
-
     public int getId() {
         return id;
     }
@@ -32,6 +31,4 @@ public class JWTDTO {
     public void setRole(String role) {
         this.role = role;
     }
-
-
 }
