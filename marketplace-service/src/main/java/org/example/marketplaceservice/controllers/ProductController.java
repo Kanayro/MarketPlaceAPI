@@ -11,6 +11,7 @@ import org.example.marketplaceservice.mappers.ProductMapper;
 import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Product;
 import org.example.marketplaceservice.services.ProductService;
+import org.example.marketplaceservice.util.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +28,19 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final ProductValidator validator;
 
     @Autowired
-    public ProductController(ProductService productService, ProductMapper productMapper) {
+    public ProductController(ProductService productService, ProductMapper productMapper, ProductValidator validator) {
         this.productService = productService;
         this.productMapper = productMapper;
+        this.validator = validator;
     }
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult result) {
         Product product = productMapper.convertToProduct(productDTO);
+        validator.validate(product,result);
         if(result.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = result.getFieldErrors();
