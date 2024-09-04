@@ -32,15 +32,6 @@ public class ProductService {
         return product.get();
     }
 
-    public void updateProduct(Product updatedProduct, int id) {
-        Optional<Product> product = productRepository.findById(id);
-        if(product.isEmpty()) {
-            throw new ProductNotFoundException("Product with this id not found");
-        }
-        updatedProduct.setId(id);
-        productRepository.save(updatedProduct);
-    }
-
     public void updateProduct(ProductInOrder productInOrder) {
         Optional<Product> prod = productRepository.findByName(productInOrder.getName());
         if(prod.isEmpty()) {

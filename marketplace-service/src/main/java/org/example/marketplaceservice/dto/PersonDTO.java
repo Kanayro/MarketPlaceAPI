@@ -10,6 +10,16 @@ public class PersonDTO {
 
     private String password;
 
+    public PersonDTO() {
+    }
+
+    public PersonDTO(String name, String email, String login, String password) {
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+    }
+
     public String getName() {
         return name;
     }

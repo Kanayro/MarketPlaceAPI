@@ -74,7 +74,7 @@ public class PersonController {
     }
 
     @PostMapping("/login")
-    public Map<String,String> login(@RequestBody @Valid AuthenticationDTO authenticationDTO, BindingResult result, HttpSession session) {
+    public Map<String,String> login(@RequestBody AuthenticationDTO authenticationDTO, HttpSession session) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(authenticationDTO.getLogin(),
                 authenticationDTO.getPassword());
         try{
@@ -87,13 +87,6 @@ public class PersonController {
         String jToken = jwtUtil.generateToken(jwtdto);
 
         return Map.of("jwt-token",jToken);
-
-    }
-
-    @GetMapping("/per")
-    public String getPerson(HttpServletRequest request){
-
-        return "sdsdsdsdsd";
 
     }
 
