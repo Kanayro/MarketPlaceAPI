@@ -11,6 +11,16 @@ public class ProductDTO {
 
     private boolean isCount;
 
+    public ProductDTO(String name, int price, int count, boolean isCount) {
+        this.name = name;
+        this.price = price;
+        this.count = count;
+        this.isCount = isCount;
+    }
+
+    public ProductDTO() {
+    }
+
     public String getName() {
         return name;
     }

@@ -1,15 +1,12 @@
 package org.example.marketplaceservice.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.marketplaceservice.dto.AuthenticationDTO;
 import org.example.marketplaceservice.dto.JWTDTO;
 import org.example.marketplaceservice.dto.PersonDTO;
-import org.example.marketplaceservice.exceptions.PersonNotCreatedException;
 import org.example.marketplaceservice.mappers.PersonMapper;
 import org.example.marketplaceservice.models.Person;
 import org.example.marketplaceservice.security.JWTUtil;
-import org.example.marketplaceservice.services.PersonDetailsService;
 import org.example.marketplaceservice.services.PersonService;
 import org.example.marketplaceservice.services.RegistrationService;
 import org.example.marketplaceservice.util.PersonValidator;
@@ -18,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,9 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,9 +37,6 @@ public class PersonControllerTest {
     private MockMvc mockMvc;
 
     private ObjectMapper mapper;
-
-    @Mock
-    private PersonDetailsService service;
 
     @Mock
     private PersonMapper personMapper;

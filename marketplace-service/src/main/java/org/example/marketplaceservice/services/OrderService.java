@@ -29,10 +29,14 @@ public class OrderService {
     public void save(Order order) {
         for (var productInOrder : order.getProducts()) {
             productService.updateProduct(productInOrder);
+            System.out.println("me");
         }
+        System.out.println("me1");
         order.setDateOfCreate(new Date());
         order.setStatus("ASSEMBLY");
+        System.out.println("me2");
         orderRepository.save(order);
+        System.out.println("me3");
     }
 
     public Order createOrder(List<ProductInOrder> products, Person person) {
