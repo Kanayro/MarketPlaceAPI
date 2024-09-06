@@ -45,48 +45,54 @@ public class OrderController {
 
     @GetMapping("/create")
     public ResponseEntity<HttpStatus> createOrder(HttpServletRequest request, HttpSession session) {
-        Cart cart = (Cart) session.getAttribute("user");
-        if(cart.getCart().isEmpty()) {
-            throw new CartIsEmptyException("Your cart is empty");
+        Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
+        if(cart.getCart().isEmpty()) { // Проверка, пуста ли корзина.
+            throw new CartIsEmptyException("Your cart is empty"); // Если корзина пуста, выбрасывается исключение.
         }
-        Person person = personService.findByLogin( jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin());
-        Order order = orderService.createOrder(cart.getCart(),person);
-        orderService.save(order);
-        producer.sendMessage(new OrderMessageDTO(order.getId(), order.getStatus()));
-        cart.clear();
+        Person person = personService.findByLogin( // Найти пользователя по логину.
+                jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin()
+        );
+        Order order = orderService.createOrder(cart.getCart(), person); // Создание нового заказа на основе товаров в корзине.
+        orderService.save(order); // Сохранение заказа в базе данных.
+        producer.sendMessage(new OrderMessageDTO(order.getId(), order.getStatus())); // Отправка сообщения о заказе в Kafka.
+        cart.clear(); // Очистка корзины.
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.OK); // Возврат успешного ответа.
     }
 
     @GetMapping("/get")
     public List<OrderDTO> getOrders(HttpServletRequest request) {
-        Person person = personService.findByLogin(jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin());
-        List<Order> orders = orderService.getOrdersByPerson(person);
+        Person person = personService.findByLogin( // Получение пользователя по логину из JWT.
+                jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin()
+        );
+        List<Order> orders = orderService.getOrdersByPerson(person); // Получение всех заказов пользователя.
+        // Преобразование заказов в список DTO и возврат его.
         return orders.stream().map(orderMapper::convertToOrderDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}/get")
+    @GetMapping("/{id}/get") // Обрабатывает GET-запросы на получение заказа по его ID.
     public OrderDTO getOrder(@PathVariable("id") int id) {
-        return orderMapper.convertToOrderDTO(orderService.getOrder(id));
+        return orderMapper.convertToOrderDTO(orderService.getOrder(id)); // Возвращает заказ по ID, преобразованный в DTO.
     }
 
-    //Exception handlers
+    // Обработчики исключений
 
-    @ExceptionHandler
+    @ExceptionHandler // Обработка исключений, выбрасываемых в методах данного контроллера.
     private ResponseEntity<ErrorResponse> handleException(UsernameNotFoundException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        // Создание объекта ответа с ошибкой.
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Возврат ответа с ошибкой и статусом 400 BAD_REQUEST.
     }
 
-    @ExceptionHandler
+    @ExceptionHandler // Обработка исключений для заказа, если он не найден.
     private ResponseEntity<ErrorResponse> handleException(OrderNotFoundException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // Возврат ответа с ошибкой и статусом 404 NOT_FOUND.
     }
 
-    @ExceptionHandler
+    @ExceptionHandler // Обработка исключений для пустой корзины.
     private ResponseEntity<ErrorResponse> handleException(CartIsEmptyException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Возврат ответа с ошибкой и статусом 400 BAD_REQUEST.
     }
 }

@@ -30,25 +30,31 @@ public class CartController {
 
     @GetMapping("/get")
     public List<ProductInOrderDTO> getCart(HttpSession session) {
-        Cart cart = (Cart) session.getAttribute("user");
-        if(cart.getCart().isEmpty()) {
-            throw new CartIsEmptyException("Your cart is empty");
+        Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
+
+        if(cart.getCart().isEmpty()) { // Проверка, пустая ли корзина.
+            throw new CartIsEmptyException("Your cart is empty"); // Если корзина пуста, выбрасывается исключение.
         }
-        return cart.getCart().stream().map(productInOrderMapper::convertToProductInOrderDTO).collect(Collectors.toList());
+
+        // Преобразование содержимого корзины в список DTO и возврат его.
+        return cart.getCart().stream()
+                .map(productInOrderMapper::convertToProductInOrderDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/clear")
     public ResponseEntity<HttpStatus> clearCart(HttpSession session) {
-        Cart cart = (Cart) session.getAttribute("user");
-        cart.clear();
-        return ResponseEntity.ok(HttpStatus.OK);
+        Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
+        cart.clear(); // Очистка корзины.
+        return ResponseEntity.ok(HttpStatus.OK); // Возврат успешного ответа.
     }
 
-    //Exception Handlers
+    // Обработчики исключений
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(CartIsEmptyException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        // Создание объекта ответа с ошибкой.
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Возврат ответа с ошибкой и статусом 400 BAD_REQUEST.
     }
 }

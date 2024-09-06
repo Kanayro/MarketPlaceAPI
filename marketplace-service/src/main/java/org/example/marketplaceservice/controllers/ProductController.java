@@ -37,62 +37,89 @@ public class ProductController {
         this.validator = validator;
     }
 
+    // Метод для добавления нового продукта.
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult result) {
+        // Преобразуем DTO (Data Transfer Object) в сущность Product.
         Product product = productMapper.convertToProduct(productDTO);
-        validator.validate(product,result);
-        if(result.hasErrors()) {
+
+        // Выполняем валидацию данных продукта.
+        validator.validate(product, result);
+
+        // Проверяем, возникли ли ошибки во время валидации.
+        if (result.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = result.getFieldErrors();
 
-            for(FieldError error : errors){
+            // Составляем сообщение с ошибками валидации.
+            for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ");
             }
+            // Если есть ошибки, выбрасываем исключение с сообщением об ошибках.
             throw new ProductNotCreatedException(errorMsg.toString());
         }
+
+        // Сохраняем продукт с помощью сервиса.
         productService.save(product);
 
+        // Возвращаем статус 200 OK в ответе.
         return ResponseEntity.ok(HttpStatus.OK);
-
     }
 
+    // Метод для получения продукта по его идентификатору.
     @GetMapping("/{id}")
-    public ProductDTO getProduct(@PathVariable("id") int id){
+    public ProductDTO getProduct(@PathVariable("id") int id) {
+        // Получаем продукт из сервиса и преобразуем его в DTO.
         return productMapper.convertToProductDTO(productService.findById(id));
     }
 
+    // Метод для получения списка всех продуктов.
     @GetMapping("/getProducts")
     public List<ProductDTO> getProducts() {
-        return productService.getProducts().stream().map(productMapper::convertToProductDTO).collect(Collectors.toList());
+        // Получаем список всех продуктов, преобразуем их в DTO и возвращаем.
+        return productService.getProducts().stream()
+                .map(productMapper::convertToProductDTO) // Преобразуем каждую сущность Product в ProductDTO.
+                .collect(Collectors.toList()); // Собираем в список.
     }
 
+    // Метод для добавления продукта в корзину пользователя.
     @GetMapping("/{id}/add")
     public ResponseEntity<HttpStatus> addProductToCart(@PathVariable int id, HttpSession session, @RequestParam("count") int count) {
+        // Находим продукт по его идентификатору.
         Product product = productService.findById(id);
-        Cart cart = (Cart) session.getAttribute("user");
-        cart.addProduct(product,count);
-        session.setAttribute("user",cart);
 
+        // Получаем объект корзины из сессии пользователя.
+        Cart cart = (Cart) session.getAttribute("user");
+        // Добавляем продукт в корзину с указанным количеством.
+        cart.addProduct(product, count);
+        // Сохраняем обновленную корзину обратно в сессию.
+        session.setAttribute("user", cart);
+
+        // Возвращаем статус 200 OK в ответе.
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    //Exception handlers
+    // Обработчики исключений для обработки определенных ошибок.
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(ProductNotFoundException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+    private ResponseEntity<ErrorResponse> handleException(ProductNotFoundException e) {
+        // Создаем объект ErrorResponse на основе сообщения исключения и текущего времени.
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        // Возвращаем ответ с кодом NOT_FOUND (404).
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(ProductNotEnoughException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    private ResponseEntity<ErrorResponse> handleException(ProductNotEnoughException e) {
+        // Обработка исключений, связанных с недостаточным количеством продукта.
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Возвращаем BAD_REQUEST (400).
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(ProductNotCreatedException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    private ResponseEntity<ErrorResponse> handleException(ProductNotCreatedException e) {
+        // Обработка исключений, возникающих при создании продукта.
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Возвращаем BAD_REQUEST (400).
     }
 }

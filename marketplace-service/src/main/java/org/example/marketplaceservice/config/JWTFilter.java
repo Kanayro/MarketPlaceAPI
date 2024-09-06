@@ -18,9 +18,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JWTFilter extends OncePerRequestFilter {
+public class JWTFilter extends OncePerRequestFilter { // Наследуется от OncePerRequestFilter, что гарантирует выполнение фильтра только один раз на запрос.
 
-    private final JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil; //
     private final PersonDetailsService personDetailsService;
 
     @Autowired
@@ -31,32 +31,34 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization"); // Получаем заголовок Authorization из запроса
 
+        // Проверяем, что заголовок присутствует, не пуст и начинается с "Bearer "
         if(authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")){
-            String jwt = authHeader.substring(7);
+            String jwt = authHeader.substring(7); // Извлекаем токен JWT, отсекая "Bearer "
 
-            if(jwt.isBlank()){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid jwt token in Bearer header");
-
+            if(jwt.isBlank()){ // Если токен пустой
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid jwt token in Bearer header"); // Отправляем ошибку 400
             }else{
                 try {
-                    JWTDTO jwtdto = jwtUtil.validateTokenAndRetrieveClaim(jwt);
-                    UserDetails userDetails = personDetailsService.loadUserByUsername(jwtdto.getLogin());
+                    JWTDTO jwtdto = jwtUtil.validateTokenAndRetrieveClaim(jwt); // Проверяем токен и получаем его полезную нагрузку
+                    UserDetails userDetails = personDetailsService.loadUserByUsername(jwtdto.getLogin()); // Загружаем детали пользователя по логину
 
+                    // Создаем объект аутентификации с пользовательскими данными
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
                                     userDetails.getAuthorities());
 
+                    // Проверяем, установлен ли уже объект аутентификации в контексте безопасности
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                        SecurityContextHolder.getContext().setAuthentication(authToken); // Устанавливаем аутентификацию в контекс
                     }
-                }catch (JWTVerificationException e){
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid jwt token");
+                }catch (JWTVerificationException e){ // Обработка исключений, связанных с ошибкой валидации JWT
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid jwt token"); // Отправляем ошибку 400
                 }
             }
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request,response); // Передаем управление следующему фильтру в цепочке
     }
 }

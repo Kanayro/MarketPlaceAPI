@@ -1,6 +1,5 @@
 package org.example.marketplaceservice.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.marketplaceservice.dto.AuthenticationDTO;
@@ -9,7 +8,6 @@ import org.example.marketplaceservice.dto.PersonDTO;
 import org.example.marketplaceservice.exceptions.ErrorResponse;
 import org.example.marketplaceservice.exceptions.PersonNotCreatedException;
 import org.example.marketplaceservice.exceptions.PersonNotFoundException;
-import org.example.marketplaceservice.exceptions.ProductNotFoundException;
 import org.example.marketplaceservice.mappers.PersonMapper;
 import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Person;
@@ -55,58 +53,76 @@ public class PersonController {
 
     @PostMapping("/registration")
     public Map<String,String> register(@RequestBody @Valid PersonDTO personDTO, BindingResult result) {
+        // Преобразуем DTO в сущность Person
         Person person = personMapper.convertToPerson(personDTO);
-        validator.validate(person,result);
-        if(result.hasErrors()) {
+
+        // Валидируем данные пользователя
+        validator.validate(person, result);
+        if (result.hasErrors()) {
+            // Если есть ошибки валидации, собираем их в строку
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = result.getFieldErrors();
-
-            for(FieldError error : errors){
+            for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ");
             }
+            // Выбрасываем исключение с сообщением об ошибке
             throw new PersonNotCreatedException(errorMsg.toString());
         }
+
+        // Регистрируем пользователя
         registrationService.register(person);
+        // Генерируем JWT токен для зарегистрированного пользователя
         String token = jwtUtil.generateToken(personMapper.convertToJWTDTO(person));
 
-        return Map.of("jwt-token",token);
-
+        // Возвращаем JWT токен в ответе
+        return Map.of("jwt-token", token);
     }
 
     @PostMapping("/login")
     public Map<String,String> login(@RequestBody AuthenticationDTO authenticationDTO, HttpSession session) {
+        // Создаем токен для аутентификации
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(authenticationDTO.getLogin(),
                 authenticationDTO.getPassword());
-        try{
+        try {
+            // Пытаемся аутентифицировать пользователя
             authenticationManager.authenticate(token);
-        }catch (BadCredentialsException e){
+        } catch (BadCredentialsException e) {
+            // Если аутентификация не удалась, выбрасываем исключение
             throw new PersonNotFoundException("Invalid login or password");
         }
+
+        // Находим пользователя и преобразуем в JWTDTO
         JWTDTO jwtdto = personMapper.convertToJWTDTO(personService.findByLogin(authenticationDTO.getLogin()));
+        // Сохраняем объект Cart в сессии для пользователя
         session.setAttribute("user", new Cart());
+        // Генерируем JWT токен для аутентифицированного пользователя
         String jToken = jwtUtil.generateToken(jwtdto);
 
-        return Map.of("jwt-token",jToken);
-
+        // Возвращаем JWT токен в ответе
+        return Map.of("jwt-token", jToken);
     }
 
-    //Exception handlers
+    // Обработчики исключений
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        // Создаем объект ErrorResponse на основе исключения и текущего времени
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
+        // Возвращаем ответ с статусом BAD_REQUEST
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(PersonNotCreatedException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        // Обработка исключений, связанных с созданием пользователя
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(UsernameNotFoundException e){
-        ErrorResponse response = new ErrorResponse(e.getMessage(),System.currentTimeMillis());
+        // Обработка исключений, возникающих при отсутствии пользователя
+        ErrorResponse response = new ErrorResponse(e.getMessage(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

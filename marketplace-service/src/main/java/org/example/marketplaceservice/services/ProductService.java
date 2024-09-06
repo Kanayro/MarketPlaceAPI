@@ -34,7 +34,6 @@ public class ProductService {
 
     public void updateProduct(ProductInOrder productInOrder) {
         Optional<Product> prod = productRepository.findByName(productInOrder.getName());
-        System.out.println("prdo1");
         if(prod.isEmpty()) {
             throw new ProductNotFoundException("Product with this name not found ");
         }

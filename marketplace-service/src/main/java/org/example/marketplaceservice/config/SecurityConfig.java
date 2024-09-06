@@ -19,46 +19,42 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-public class SecurityConfig {
+@EnableWebSecurity // Аннотация для активации конфигурации безопасности Spring Security в приложении.
+@EnableMethodSecurity // Аннотация, позволяющая применять безопасность на уровне методов, используя аннотации, такие как @PreAuthorize.
+public class SecurityConfig { // Класс, отвечающий за настройку аспектов безопасности приложения.
 
     private final PersonDetailsService personDetailsService;
     private final JWTFilter jwtFilter;
+
     @Autowired
     public SecurityConfig(PersonDetailsService personDetailsService, JWTFilter jwtFilter) {
         this.personDetailsService = personDetailsService;
         this.jwtFilter = jwtFilter;
     }
 
+    // Определение SecurityFilterChain для настройки параметров безопасности HTTP.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/auth/login","/auth/registration","/error").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(3))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+        http.csrf(AbstractHttpConfigurer::disable) // Отключение защиты от CSRF (Cross-Site Request Forgery).
+                .authorizeHttpRequests((requests) -> requests // Настройка авторизации для HTTP-запросов.
+                        .requestMatchers("/auth/login", "/auth/registration", "/error").permitAll() // Эти URL доступны всем без аутентификации.
+                        .anyRequest().authenticated()) // Все остальные запросы требуют аутентификации.
+                .sessionManagement((session) -> session // Настройка управления сессиями.
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Политика создания сессий: создается только по мере необходимости.
+                        .maximumSessions(3)) // Установка ограничения на максимальное количество сессий для одного пользователя (3).
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Добавление JWT фильтра перед UsernamePasswordAuthenticationFilter.
+        return http.build(); // Строим и возвращаем объект SecurityFilterChain.
     }
 
+    // Определение PasswordEncoder для хеширования паролей.
     @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(personDetailsService);
-        authenticationProvider.setPasswordEncoder(getPasswordEncoder());
-        return authenticationProvider;
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(); // Возвращаем экземпляр BCryptPasswordEncoder для безопасного хеширования паролей.
     }
 
-    @Bean
-    public PasswordEncoder getPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
+    // Определение AuthenticationManager для управления аутентификацией.
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+        return authenticationConfiguration.getAuthenticationManager(); // Возвращаем AuthenticationManager из конфигурации аутентификации.
     }
 }
