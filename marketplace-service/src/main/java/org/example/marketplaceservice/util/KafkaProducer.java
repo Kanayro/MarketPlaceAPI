@@ -16,7 +16,6 @@ public class KafkaProducer {
     }
 
     public void sendMessage(OrderMessageDTO message) {
-        System.out.println("Send message to order-service");
         template.send("order", message);
     }
 }
