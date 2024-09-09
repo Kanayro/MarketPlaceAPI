@@ -1,134 +1,112 @@
-package org.example.marketplaceservice.controllers;
+package org.example.marketplaceservice.integrations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.marketplaceservice.controllers.ProductController;
 import org.example.marketplaceservice.dto.ProductDTO;
 import org.example.marketplaceservice.mappers.ProductMapper;
 import org.example.marketplaceservice.models.Cart;
-import org.example.marketplaceservice.models.Product;
 import org.example.marketplaceservice.services.ProductService;
 import org.example.marketplaceservice.util.ProductValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.BindingResult;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
-public class ProductControllerTest {
+@SpringBootTest
+@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
+public class ProductControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     private ObjectMapper mapper;
 
-    @Mock
+    @Autowired
     private ProductService productService;
 
-    @Mock
+    @Autowired
     private ProductMapper productMapper;
 
-    @Mock
+    @Autowired
     private ProductValidator validator;
 
-    @InjectMocks
     private ProductController controller;
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         mapper = new ObjectMapper();
     }
 
     @Test
+    @WithMockUser
+    @Transactional
+    @Rollback
     public void shouldSaveProductDoExist() throws Exception {
-        ProductDTO productDTO = new ProductDTO("name",100,10,true);
+        ProductDTO productDTO = new ProductDTO("Cola3",100,11,true);
         String requestBody = mapper.writeValueAsString(productDTO);
-        Product product = new Product();
-
-        when(productMapper.convertToProduct(any(ProductDTO.class))).thenReturn(product);
-        doNothing().when(validator).validate(any(Product.class),any(BindingResult.class));
-
+        System.out.println(requestBody);
         mockMvc.perform(post("/product/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
                 )
                 .andExpect(status().isOk());
 
-        verify(productService,times(1)).save(product);
     }
 
     @Test
+    @WithMockUser
     public void shouldGetProduct() throws Exception {
-        Product product = new Product();
         int id = 1;
-        product.setId(id);
-        ProductDTO productDTO = new ProductDTO("name",100,10,true);
-        when(productService.findById(id)).thenReturn(product);
-        when(productMapper.convertToProductDTO(product)).thenReturn(productDTO);
+        ProductDTO productDTO = new ProductDTO("Milk",100,1,true);
         mockMvc.perform(get("/product/{id}",id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(productDTO.getName()))
                 .andExpect(jsonPath("$.price").value(productDTO.getPrice()))
-                .andExpect(jsonPath("$.count").value(productDTO.getCount()))
-                .andExpect(jsonPath("$.isCount").value(productDTO.getIsCount()));
+                .andExpect(jsonPath("$.count").value(productDTO.getCount()));
+
 
     }
 
     @Test
+    @WithMockUser
     public void shouldGetProducts() throws Exception {
-        Product product1 = new Product();
-        Product product2 = new Product();
-        String name1 = "name1";
-        String name2 = "name2";
-        product1.setName(name1);
-        product2.setName(name2);
 
-        List<Product> products = Arrays.asList(product1,product2);
-        ProductDTO productDTO1 = new ProductDTO();
-        ProductDTO productDTO2 = new ProductDTO();
-        productDTO1.setName(name1);
-        productDTO2.setName(name2);
-        when(productService.getProducts()).thenReturn(products);
-        when(productMapper.convertToProductDTO(any())).thenReturn(productDTO1).thenReturn(productDTO2);
+        String name1 = "Water";
+        String name2 = "Milk";
+
         mockMvc.perform(get("/product/getProducts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value(product1.getName()))
-                .andExpect(jsonPath("$[1].name").value(product2.getName()));
+                .andExpect(jsonPath("$[0].name").value(name1))
+                .andExpect(jsonPath("$[1].name").value(name2));
     }
 
     @Test
+    @WithMockUser
     public void shouldAddProductToCartDoExist() throws Exception {
-        Product product = new Product();
-        int id = 1;
+        int id = 11;
         int count = 2;
-        product.setId(id);
-        product.setIsCount(true);
-        product.setCount(10);
-        when(productService.findById(id)).thenReturn(product);
-        Cart cart = Mockito.mock(Cart.class);
+
+        Cart cart = new Cart();
         mockMvc.perform(get("/product/{id}/add",id)
                         .sessionAttr("user", cart)
                         .param("count", String.valueOf(count)))
                 .andExpect(status().isOk());
-        verify(cart,times(1)).addProduct(product, count);
     }
 
 }

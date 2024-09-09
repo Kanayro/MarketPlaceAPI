@@ -80,7 +80,7 @@ public class Product {
         return isCount;
     }
 
-    public void setCount(boolean count) {
+    public void setIsCount(boolean count) {
         isCount = count;
     }
 

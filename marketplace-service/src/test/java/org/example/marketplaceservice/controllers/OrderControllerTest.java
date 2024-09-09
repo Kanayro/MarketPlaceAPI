@@ -66,7 +66,7 @@ public class OrderControllerTest {
         Cart cartSpy = spy(cart);
         Product product = new Product();
         product.setCount(10);
-        product.setCount(true);
+        product.setIsCount(true);
         cartSpy.addProduct(product,2);
         Person person = new Person();
         String login = "login";

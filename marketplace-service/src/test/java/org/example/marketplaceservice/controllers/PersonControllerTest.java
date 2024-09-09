@@ -78,8 +78,8 @@ public class PersonControllerTest {
         when(jwtUtil.generateToken(any(JWTDTO.class))).thenReturn(token);
 
         mockMvc.perform(post("/auth/registration")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.jwt-token").value(token));

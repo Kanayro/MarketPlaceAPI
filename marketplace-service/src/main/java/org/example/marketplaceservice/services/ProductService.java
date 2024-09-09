@@ -40,7 +40,7 @@ public class ProductService {
         Product product = prod.get();
         product.setCount(product.getCount()-productInOrder.getCount());
         if(product.getCount() == 0) {
-            product.setCount(false);
+            product.setIsCount(false);
         }
         productRepository.save(product);
     }

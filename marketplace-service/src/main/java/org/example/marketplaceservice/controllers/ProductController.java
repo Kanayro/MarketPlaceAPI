@@ -42,7 +42,6 @@ public class ProductController {
     public ResponseEntity<HttpStatus> addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult result) {
         // Преобразуем DTO (Data Transfer Object) в сущность Product.
         Product product = productMapper.convertToProduct(productDTO);
-
         // Выполняем валидацию данных продукта.
         validator.validate(product, result);
 
