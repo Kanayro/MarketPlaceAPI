@@ -7,18 +7,24 @@ import org.example.marketplaceservice.mappers.ProductMapper;
 import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.services.ProductService;
 import org.example.marketplaceservice.util.ProductValidator;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,7 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
+@Testcontainers
 public class ProductControllerIntegrationTest {
+
+//    @Container
+//    @ServiceConnection
+//    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16");
 
     @Autowired
     private MockMvc mockMvc;
@@ -72,7 +83,7 @@ public class ProductControllerIntegrationTest {
     @WithMockUser
     public void shouldGetProduct() throws Exception {
         int id = 1;
-        ProductDTO productDTO = new ProductDTO("Milk",100,1,true);
+        ProductDTO productDTO = new ProductDTO("Milk",90,190,true);
         mockMvc.perform(get("/product/{id}",id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(productDTO.getName()))
@@ -86,8 +97,8 @@ public class ProductControllerIntegrationTest {
     @WithMockUser
     public void shouldGetProducts() throws Exception {
 
-        String name1 = "Water";
         String name2 = "Milk";
+        String name1 = "Chocolate";
 
         mockMvc.perform(get("/product/getProducts")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -99,7 +110,7 @@ public class ProductControllerIntegrationTest {
     @Test
     @WithMockUser
     public void shouldAddProductToCartDoExist() throws Exception {
-        int id = 11;
+        int id = 1;
         int count = 2;
 
         Cart cart = new Cart();

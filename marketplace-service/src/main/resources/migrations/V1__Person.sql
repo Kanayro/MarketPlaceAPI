@@ -6,4 +6,3 @@ create table Person (
     password varchar(150) not null unique
 );
 
-alter table Person owner to postgres;

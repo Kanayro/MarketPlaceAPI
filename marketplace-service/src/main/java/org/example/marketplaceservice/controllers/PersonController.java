@@ -52,7 +52,7 @@ public class PersonController {
     }
 
     @PostMapping("/registration")
-    public Map<String,String> register(@RequestBody @Valid PersonDTO personDTO, BindingResult result) {
+    public Map<String,String> register(@RequestBody @Valid PersonDTO personDTO, BindingResult result, HttpSession session) {
         // Преобразуем DTO в сущность Person
         Person person = personMapper.convertToPerson(personDTO);
 
@@ -68,7 +68,7 @@ public class PersonController {
             // Выбрасываем исключение с сообщением об ошибке
             throw new PersonNotCreatedException(errorMsg.toString());
         }
-
+        session.setAttribute("user", new Cart());
         // Регистрируем пользователя
         registrationService.register(person);
         // Генерируем JWT токен для зарегистрированного пользователя

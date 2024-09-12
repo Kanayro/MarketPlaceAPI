@@ -6,4 +6,3 @@ create table Product (
     isCount boolean not null
 );
 
-alter table Product owner to postgres;

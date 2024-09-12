@@ -76,7 +76,7 @@ public class Product {
         this.count = count;
     }
 
-    public boolean isCount() {
+    public boolean getIsCount() {
         return isCount;
     }
 

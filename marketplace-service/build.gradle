@@ -13,6 +13,16 @@ java {
     }
 }
 
+bootJar {
+    enabled = true
+}
+
+
+jar {
+    enabled = true
+
+}
+
 repositories {
     mavenCentral()
 }
@@ -29,6 +39,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:postgresql:1.17.6'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers:3.2.3'
+
     testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
     //testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'

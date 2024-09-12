@@ -16,7 +16,7 @@ public class Cart {
 
     public void addProduct(Product product, int count) {
         System.out.println(product.getCount());
-        if(product.isCount() == false) {
+        if(product.getIsCount() == false) {
             throw new ProductNotFoundException("Product not found in storage");
         }else if (product.getCount()-count < 0) {
             throw new ProductNotEnoughException("Product not enough in storage");

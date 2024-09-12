@@ -13,6 +13,21 @@ java {
     }
 }
 
+bootJar {
+    enabled = true
+//    manifest {
+//        attributes 'Main-Class': 'OrderServiceApplication'
+//    }
+}
+
+jar {
+
+    enabled = true
+//    manifest {
+//        attributes 'Main-Class': 'OrderServiceApplication'
+//    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -20,9 +35,13 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'
-    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 tasks.named('test') {

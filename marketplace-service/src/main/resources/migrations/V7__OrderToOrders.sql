@@ -1,1 +1,0 @@
-alter table "order" rename to orders;
