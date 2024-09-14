@@ -75,7 +75,7 @@ public class ProductServiceTest {
         service.updateProduct(productInOrder);
 
         assertEquals(product.getCount(), count-productInOrder.getCount());
-        assertFalse(product.isCount());
+        assertFalse(product.getIsCount());
         verify(productRepository,times(1)).findByName(name);
         verify(productRepository,times(1)).save(product);
     }

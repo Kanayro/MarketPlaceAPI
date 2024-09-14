@@ -25,9 +25,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,20 +48,15 @@ public class OrderControllerIntegrationTest {
 //    @ServiceConnection
 //    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16");
 
+    @Container
+    @ServiceConnection
+    public static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private JWTUtil jwtUtil;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private OrderMapper orderMapper;
 
     @MockBean
     private KafkaProducer producer;
