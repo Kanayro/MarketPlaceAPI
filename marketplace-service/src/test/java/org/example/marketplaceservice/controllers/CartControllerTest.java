@@ -1,6 +1,5 @@
 package org.example.marketplaceservice.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.marketplaceservice.dto.ProductInOrderDTO;
 import org.example.marketplaceservice.mappers.ProductInOrderMapper;
 import org.example.marketplaceservice.models.Cart;
@@ -29,7 +28,6 @@ public class CartControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper mapper;
 
     @Mock
     private ProductInOrderMapper productInOrderMapper;
@@ -40,7 +38,6 @@ public class CartControllerTest {
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        mapper = new ObjectMapper();
     }
 
     @Test
