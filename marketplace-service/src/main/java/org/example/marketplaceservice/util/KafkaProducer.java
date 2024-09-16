@@ -22,6 +22,6 @@ public class KafkaProducer {
     //Отпровляет сообщение в order-service
     public void sendMessage(OrderMessageDTO message) {
         template.send("order", message);
-        logger.info("Message sent");
+        logger.info("Message sent to order-service");
     }
 }
