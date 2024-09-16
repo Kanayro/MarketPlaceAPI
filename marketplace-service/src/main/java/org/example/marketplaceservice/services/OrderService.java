@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+//Сервис для получения, сохранения, обновления и удаления заказов и продуктов в них
 @Service
 public class OrderService {
 

@@ -20,7 +20,7 @@ import java.io.IOException;
 @Component
 public class JWTFilter extends OncePerRequestFilter { // Наследуется от OncePerRequestFilter, что гарантирует выполнение фильтра только один раз на запрос.
 
-    private final JWTUtil jwtUtil; //
+    private final JWTUtil jwtUtil;
     private final PersonDetailsService personDetailsService;
 
     @Autowired

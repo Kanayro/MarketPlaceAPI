@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+//Сервис для получения, обновления и удаления людей
 @Service
 public class PersonService {
 

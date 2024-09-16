@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+//Класс обертка для Person, который нужен для того чтобы spring security понимал какие методы ему нужн вызывать
 public class PersonDetails implements UserDetails {
 
     private final Person person;

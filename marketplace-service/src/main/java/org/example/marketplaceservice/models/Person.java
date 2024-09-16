@@ -5,30 +5,38 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+//Сущность Person, которая хранит в себе информацию о человеке и всех его заказах
 @Entity
 @Table(name = "Person")
 public class Person {
 
+    //Id человека
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="id")
     private int id;
 
+    //Имя человека
     @Column(name = "name")
     private String name;
 
+    //Почта аккаунта
     @Column(name = "email")
     private String email;
 
+    //Логин аккаунта
     @Column(name = "login")
     private String login;
 
+    //Пароль аккаунта
     @Column(name = "password")
     private String password;
 
+    //Роль аккаунта
     @Column(name = "role")
     private String role;
 
+    //Список заказов человека
     @OneToMany(mappedBy = "person")
     private List<Order> orders;
 

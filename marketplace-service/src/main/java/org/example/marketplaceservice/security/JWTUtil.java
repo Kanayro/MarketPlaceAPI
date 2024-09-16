@@ -7,19 +7,20 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.marketplaceservice.dto.JWTDTO;
-import org.example.marketplaceservice.models.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+//Сервис для работы с JWT токенами
 @Component
 public class JWTUtil {
 
     @Value("${jwt_secret}")
     private String secret;
 
+    //Метод генерации токена из JWTDTO
     public String generateToken(JWTDTO jwtdto){
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
@@ -33,6 +34,7 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(secret));
     }
 
+    //Метод валидирования токена и возврата JWTDTO, который ему соответствует
     public JWTDTO validateTokenAndRetrieveClaim(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User details")
@@ -49,6 +51,7 @@ public class JWTUtil {
         return jwtdto;
     }
 
+    //Метод получения токена из запроса
     public String getJWT(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
 

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-
+//Слушатель сообщений Kafka
 @Component
 public class KafkaConsumer {
 
@@ -17,6 +17,7 @@ public class KafkaConsumer {
         this.service = service;
     }
 
+    //При получении сообщения обновляет статус заказа
     @KafkaListener(topics = "resp",groupId = "order_status_consumer",
             containerFactory = "userKafkaListenerContainerFactory")
     public void OrderListener(OrderMessageDTO message) {

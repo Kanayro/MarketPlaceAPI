@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+//Класс маппер для, того чтобы конвертировать Person к PersonDTO, JWTDTO и наоборот
 @Component
 public class PersonMapper {
 

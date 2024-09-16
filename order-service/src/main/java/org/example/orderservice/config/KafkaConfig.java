@@ -17,12 +17,14 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
+//Конфигурции Kafka
 @Configuration
 public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String server;
 
+    //Конфигурация Producer
     public ProducerFactory<String, OrderMessageDTO> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
@@ -32,7 +34,7 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
-    @Bean
+    //Конфигурация Consumer
     public ConsumerFactory<String, OrderMessageDTO> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
@@ -45,11 +47,13 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
+    //Создание нового топика
     @Bean
     public NewTopic newTopic() {
         return new NewTopic("resp", 1 , (short) 1);
     }
 
+    //Шаблон сообщения
     @Bean
     public KafkaTemplate<String, OrderMessageDTO> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

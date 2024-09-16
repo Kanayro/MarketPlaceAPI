@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+//Сервис для аутентификации пользователя
 @Service
 public class PersonDetailsService implements UserDetailsService {
 

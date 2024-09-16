@@ -1,35 +1,37 @@
 package org.example.marketplaceservice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
-import jakarta.persistence.ManyToMany;
-
-import java.util.List;
 
 
+//Сущность Product, хранит о себе информацию о товаре на складе и его наличии
 @Entity
 @Table(name = "Product")
 public class Product {
 
+    //Id товара
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
+    //Имя товара
     @Column(name = "name")
     private String name;
 
+    //Цена товара
     @Column(name = "price")
     private int price;
 
+    //Количество товара
     @Column(name = "count")
     private int count;
 
+    //Наличие товара на складе
     @Column(name = "iscount")
     private boolean isCount;
 

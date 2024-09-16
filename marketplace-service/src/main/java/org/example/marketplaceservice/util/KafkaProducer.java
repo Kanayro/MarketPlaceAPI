@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+//Сервис Producer для отправления сообщений в Kafka
 @Component
 public class KafkaProducer {
 
@@ -15,6 +16,7 @@ public class KafkaProducer {
         this.template = template;
     }
 
+    //Отпровляет сообщение в order-service
     public void sendMessage(OrderMessageDTO message) {
         template.send("order", message);
     }

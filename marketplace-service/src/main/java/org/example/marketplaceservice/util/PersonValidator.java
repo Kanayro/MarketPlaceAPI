@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+//Класс для валидации людей при регистрации
 @Component
 public class PersonValidator implements Validator {
 

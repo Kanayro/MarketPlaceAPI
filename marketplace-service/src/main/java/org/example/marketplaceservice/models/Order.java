@@ -19,29 +19,36 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+//Сущность Order, которая хранит в себе информацию о заказе
 @Entity
 @Table(name = "orders")
 public class Order {
 
+    //Id заказа
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
+    //Сумма заказа
     @Column(name = "cost")
     private int cost;
 
+    //Человек оформивший заказ
     @ManyToOne
     @JoinColumn(referencedColumnName = "id",name = "person_id")
     private Person person;
 
+    //Продукты в заказе
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<ProductInOrder> products;
 
+    //Дата создания заказа
     @Column(name = "date_of_create")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfCreate;
 
+    //Статус заказа
     @Column(name = "status")
     private String status;
 

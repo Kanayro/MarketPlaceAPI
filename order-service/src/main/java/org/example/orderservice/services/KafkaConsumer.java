@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+//Слушатель сообщений Kafka
 @Component
 public class KafkaConsumer {
 
@@ -19,6 +20,7 @@ public class KafkaConsumer {
         this.producer = producer;
     }
 
+    //При получении сообщения симулирует обработку заказа
     @KafkaListener(topics = "order",groupId = "order_consumer",
             containerFactory = "userKafkaListenerContainerFactory")
     public void ListenOrder(OrderMessageDTO message) {

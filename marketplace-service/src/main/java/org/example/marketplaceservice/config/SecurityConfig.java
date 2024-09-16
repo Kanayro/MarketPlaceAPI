@@ -23,12 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity // Аннотация, позволяющая применять безопасность на уровне методов, используя аннотации, такие как @PreAuthorize.
 public class SecurityConfig { // Класс, отвечающий за настройку аспектов безопасности приложения.
 
-    private final PersonDetailsService personDetailsService;
     private final JWTFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(PersonDetailsService personDetailsService, JWTFilter jwtFilter) {
-        this.personDetailsService = personDetailsService;
+    public SecurityConfig( JWTFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 

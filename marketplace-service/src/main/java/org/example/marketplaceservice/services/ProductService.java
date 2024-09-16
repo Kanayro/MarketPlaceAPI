@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+//Сервис для получения, сохранения, обновления и удаления продуктов
 @Service
 public class ProductService {
 

@@ -11,24 +11,30 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 
+//Сущность ProductInOrder, хранит в себе информацию о товаре в заказе
 @Entity
 @Table(name = "productinorder")
 public class ProductInOrder {
 
+    //Id товара в заказе
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
+    //Имя товара в заказе
     @Column(name = "name")
     private String name;
 
+    //Общая цена товаров в заказе данного типа
     @Column(name = "price")
     private int price;
 
+    //Количество товаров в заказе
     @Column(name = "count")
     private int count;
 
+    //Заказ, к которому принадлежит данный товар
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @JsonIgnore

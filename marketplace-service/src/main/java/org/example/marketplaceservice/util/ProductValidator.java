@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+//Сервис для валидации продуктов при добавлении
 @Component
 public class ProductValidator implements Validator {
 
