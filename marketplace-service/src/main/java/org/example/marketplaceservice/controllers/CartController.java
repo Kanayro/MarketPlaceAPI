@@ -1,11 +1,14 @@
 package org.example.marketplaceservice.controllers;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.marketplaceservice.config.JWTFilter;
 import org.example.marketplaceservice.dto.ProductInOrderDTO;
 import org.example.marketplaceservice.exceptions.CartIsEmptyException;
 import org.example.marketplaceservice.exceptions.ErrorResponse;
 import org.example.marketplaceservice.mappers.ProductInOrderMapper;
 import org.example.marketplaceservice.models.Cart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class CartController {
 
     private final ProductInOrderMapper productInOrderMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @Autowired
     public CartController(ProductInOrderMapper productInOrderMapper) {
@@ -31,11 +35,11 @@ public class CartController {
     @GetMapping("/get")
     public List<ProductInOrderDTO> getCart(HttpSession session) {
         Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
-
         if(cart.getCart().isEmpty()) { // Проверка, пустая ли корзина.
+            logger.warn("Cart is empty");
             throw new CartIsEmptyException("Your cart is empty"); // Если корзина пуста, выбрасывается исключение.
         }
-
+        logger.info("Successful receipt of cart");
         // Преобразование содержимого корзины в список DTO и возврат его.
         return cart.getCart().stream()
                 .map(productInOrderMapper::convertToProductInOrderDTO)
@@ -46,6 +50,7 @@ public class CartController {
     public ResponseEntity<HttpStatus> clearCart(HttpSession session) {
         Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
         cart.clear(); // Очистка корзины.
+        logger.info("Successful emptying of cart");
         return ResponseEntity.ok(HttpStatus.OK); // Возврат успешного ответа.
     }
 

@@ -15,6 +15,8 @@ import org.example.marketplaceservice.security.JWTUtil;
 import org.example.marketplaceservice.services.OrderService;
 import org.example.marketplaceservice.services.PersonService;
 import org.example.marketplaceservice.util.KafkaProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ public class OrderController {
     private final PersonService personService;
     private final OrderMapper orderMapper;
     private final KafkaProducer producer;
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Autowired
     public OrderController(JWTUtil jwtUtil, OrderService orderService, PersonService personService, OrderMapper orderMapper, KafkaProducer producer) {
@@ -47,6 +50,7 @@ public class OrderController {
     public ResponseEntity<HttpStatus> createOrder(HttpServletRequest request, HttpSession session) {
         Cart cart = (Cart) session.getAttribute("user"); // Получение объекта Cart из сессии пользователя.
         if(cart.getCart().isEmpty()) { // Проверка, пуста ли корзина.
+            logger.warn("User's cart is empty");
             throw new CartIsEmptyException("Your cart is empty"); // Если корзина пуста, выбрасывается исключение.
         }
         Person person = personService.findByLogin( // Найти пользователя по логину.
@@ -56,7 +60,7 @@ public class OrderController {
         orderService.save(order); // Сохранение заказа в базе данных.
         producer.sendMessage(new OrderMessageDTO(order.getId(), order.getStatus())); // Отправка сообщения о заказе в Kafka.
         cart.clear(); // Очистка корзины.
-
+        logger.info("Order created successfully");
         return ResponseEntity.ok(HttpStatus.OK); // Возврат успешного ответа.
     }
 
@@ -66,12 +70,14 @@ public class OrderController {
                 jwtUtil.validateTokenAndRetrieveClaim(jwtUtil.getJWT(request)).getLogin()
         );
         List<Order> orders = orderService.getOrdersByPerson(person); // Получение всех заказов пользователя.
+        logger.info("Orders received successfully");
         // Преобразование заказов в список DTO и возврат его.
         return orders.stream().map(orderMapper::convertToOrderDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}/get") // Обрабатывает GET-запросы на получение заказа по его ID.
     public OrderDTO getOrder(@PathVariable("id") int id) {
+        logger.info("Orders received successfully");
         return orderMapper.convertToOrderDTO(orderService.getOrder(id)); // Возвращает заказ по ID, преобразованный в DTO.
     }
 

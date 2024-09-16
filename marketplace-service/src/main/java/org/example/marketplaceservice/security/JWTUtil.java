@@ -34,7 +34,7 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(secret));
     }
 
-    //Метод валидирования токена и возврата JWTDTO, который ему соответствует
+    //Метод валидирования токена и возврата JWTDTO
     public JWTDTO validateTokenAndRetrieveClaim(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User details")

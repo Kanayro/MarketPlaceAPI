@@ -15,6 +15,8 @@ import org.example.marketplaceservice.security.JWTUtil;
 import org.example.marketplaceservice.services.PersonService;
 import org.example.marketplaceservice.services.RegistrationService;
 import org.example.marketplaceservice.util.PersonValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,7 @@ public class PersonController {
     private final PersonService personService;
     private final JWTUtil jwtUtil;
     private final PersonValidator validator;
+    private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
 
     @Autowired
     public PersonController(PersonMapper personMapper, RegistrationService registrationService, AuthenticationManager authenticationManager,
@@ -65,6 +68,7 @@ public class PersonController {
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ");
             }
+            logger.warn("Person is not created");
             // Выбрасываем исключение с сообщением об ошибке
             throw new PersonNotCreatedException(errorMsg.toString());
         }
@@ -74,6 +78,7 @@ public class PersonController {
         // Генерируем JWT токен для зарегистрированного пользователя
         String token = jwtUtil.generateToken(personMapper.convertToJWTDTO(person));
 
+        logger.info("Person is register");
         // Возвращаем JWT токен в ответе
         return Map.of("jwt-token", token);
     }
@@ -87,6 +92,7 @@ public class PersonController {
             // Пытаемся аутентифицировать пользователя
             authenticationManager.authenticate(token);
         } catch (BadCredentialsException e) {
+            logger.warn("Bad credentials");
             // Если аутентификация не удалась, выбрасываем исключение
             throw new PersonNotFoundException("Invalid login or password");
         }
@@ -97,7 +103,7 @@ public class PersonController {
         session.setAttribute("user", new Cart());
         // Генерируем JWT токен для аутентифицированного пользователя
         String jToken = jwtUtil.generateToken(jwtdto);
-
+        logger.info("Person is login");
         // Возвращаем JWT токен в ответе
         return Map.of("jwt-token", jToken);
     }

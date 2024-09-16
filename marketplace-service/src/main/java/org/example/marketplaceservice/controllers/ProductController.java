@@ -12,6 +12,8 @@ import org.example.marketplaceservice.models.Cart;
 import org.example.marketplaceservice.models.Product;
 import org.example.marketplaceservice.services.ProductService;
 import org.example.marketplaceservice.util.ProductValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class ProductController {
     private final ProductService productService;
     private final ProductMapper productMapper;
     private final ProductValidator validator;
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
     public ProductController(ProductService productService, ProductMapper productMapper, ProductValidator validator) {
@@ -54,13 +57,14 @@ public class ProductController {
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ");
             }
+            logger.warn("Product is not created");
             // Если есть ошибки, выбрасываем исключение с сообщением об ошибках.
             throw new ProductNotCreatedException(errorMsg.toString());
         }
 
         // Сохраняем продукт с помощью сервиса.
         productService.save(product);
-
+        logger.info("Product is created");
         // Возвращаем статус 200 OK в ответе.
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -68,6 +72,7 @@ public class ProductController {
     // Метод для получения продукта по его идентификатору.
     @GetMapping("/{id}")
     public ProductDTO getProduct(@PathVariable("id") int id) {
+        logger.info("Product has been received");
         // Получаем продукт из сервиса и преобразуем его в DTO.
         return productMapper.convertToProductDTO(productService.findById(id));
     }
@@ -93,7 +98,7 @@ public class ProductController {
         cart.addProduct(product, count);
         // Сохраняем обновленную корзину обратно в сессию.
         session.setAttribute("user", cart);
-
+        logger.info("Product successfully added to cart");
         // Возвращаем статус 200 OK в ответе.
         return ResponseEntity.ok(HttpStatus.OK);
     }
