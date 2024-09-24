@@ -30,5 +30,8 @@ public class PersonValidator implements Validator {
         if(service.findPersonByLogin(person.getLogin()).isPresent()) {
             errors.rejectValue("login","","This login is already in use");
         }
+        if(service.findPersonByEmail(person.getEmail()).isPresent()) {
+            errors.rejectValue("email","","This email is already in use");
+        }
     }
 }

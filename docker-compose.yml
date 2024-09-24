@@ -2,6 +2,7 @@ version: '3.1'
 
 volumes:
   pg_marketplace:
+  pg_order:
 
 services:
 
@@ -18,6 +19,19 @@ services:
     ports:
       - "5432:5432"
 
+  order_db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_DB: ${POSTGRES_ORDER_DB}
+    volumes:
+      - pg_order:/var/lib/postgresql/data
+
+    ports:
+      - "5433:5432"
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -59,7 +73,10 @@ services:
       dockerfile: Dockerfile
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://order_db:5432/${POSTGRES_ORDER_DB}'
+      SPRING_FLYWAY_URL: 'jdbc:postgresql://order_db:5432/${POSTGRES_ORDER_DB}'
     depends_on:
+     - order_db
      - kafka
     ports:
       - "8081:8081"

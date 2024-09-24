@@ -53,4 +53,8 @@ public class PersonService {
     public Optional<Person> findPersonByLogin(String login) {
         return personRepository.findByLogin(login);
     }
+
+    public Optional<Person> findPersonByEmail(String email) {
+        return personRepository.findPersonByEmail(email);
+    }
 }
